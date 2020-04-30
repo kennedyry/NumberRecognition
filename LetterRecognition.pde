@@ -1,6 +1,6 @@
 import java.util.Scanner; 
 
-int cellSize = 15; 
+int cellSize = 10; 
 
 int numPerLetter = 50; 
 int numOfLetters = 10; 
@@ -52,14 +52,17 @@ void draw() {
         selected.c = color(0); 
       }
     }
-      this.displayImage(width / xBound, 0, trainingData.get(trainingIndex));  
       if (distances.size() > 0) {
+      this.displayImage(width / xBound, 0, distances.get(trainingIndex).img);  
       Training optimal = distances.get(0); 
       this.displayImage(width / 4, height / 2, optimal.img); 
       textSize(20); 
       fill(0); 
       text("Assumed number: " + optimal.num + ". Training Number: " + optimal.trainingNum + ".\n With distance of: " + optimal.distance, width / 2, height - 50); 
-
+      //trainingindex 
+      text("Number: " + distances.get(trainingIndex).num + "\nTraining Index: " + distances.get(trainingIndex).trainingNum + ".\nDistance: " + distances.get(trainingIndex).distance, .8 * width, .6 * height); 
+      } else {
+        this.displayImage(width / xBound, 0, trainingData.get(trainingIndex));  
       }
     
     stroke(0); 
@@ -85,7 +88,8 @@ void keyPressed(){
     }
     if (key == ' '){
       calculateDistances(); 
-      distances = sortTrainings();  
+      distances = sortTrainings(); 
+      trainingIndex = 0; 
     }
 }
 
@@ -111,7 +115,7 @@ void calculateDistances() {
     int[][] drawnImage = new int[height/(yBound * cellSize)][width / (xBound * cellSize)]; 
     for(int i = 0;  i < height / (cellSize * yBound); i++){
       for(int j = 0; j < width / (cellSize * xBound); j++){
-         drawnImage[i][j] = (int)red(get(j * cellSize, i * cellSize)); 
+         drawnImage[i][j] = (int)(255 - red(get(j * cellSize, i * cellSize))); 
       }
     }
     for(int i = 0; i < trainingData.size(); i++){
@@ -143,11 +147,11 @@ void createTrainingData() {
     output = createWriter(fileName); 
     noStroke(); 
     fill(0); 
-    textSize(random(60,350)); 
+    textSize(random(100,350)); 
     text(currLetter, width / (2 * xBound) + random(-1,1) * (width /(4 * xBound)), height / (2 * yBound) + random(-1,1) * (height / (5 * yBound))); 
     for(int row = cellSize/2; row < height / yBound; row += cellSize) {
         for(int col = cellSize/2; col < width / xBound; col += cellSize){
-           output.print((int)red(get(col,row)) + " "); 
+           output.print((int)(255 - red(get(col,row))) + " "); 
           }
         output.print("\n"); 
       }
@@ -168,7 +172,7 @@ void createTrainingData() {
 void displayImage(int x, int y, Integer[][]image) {
    for(int i = 0; i < image.length; i++){
       for(int  j = 0; j < image[0].length; j++){
-        fill(color(image[i][j]));
+        fill(color((255 - image[i][j])));
         int xCord = x + j * cellSize; 
         int yCord = y + i * cellSize; 
         rect(xCord - cellSize/2, yCord - cellSize/2, cellSize, cellSize); 
